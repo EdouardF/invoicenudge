@@ -1,53 +1,82 @@
 # InvoiceNudge
 
-> Automated Invoice Reminders for Freelancers — Never chase payments again.
+> Automated invoice reminders for freelancers — never chase payments again.
+
+[![CI](https://github.com/EdouardF/invoicenudge/actions/workflows/ci.yml/badge.svg)](https://github.com/EdouardF/invoicenudge/actions/workflows/ci.yml)
+[![SonarCloud](https://github.com/EdouardF/invoicenudge/actions/workflows/sonar.yml/badge.svg)](https://github.com/EdouardF/invoicenudge/actions/workflows/sonar.yml)
+[![Vitest](https://img.shields.io/badge/tested_with-vitest-6da13f)](https://vitest.dev/)
 
 ## Features
 
-- 💰 **Invoice Management** — Create, track, and manage invoices
-- 👥 **Client Dashboard** — Client database with contact info
-- 🔔 **Smart Reminders** — Email & SMS reminders for overdue invoices
-- 📊 **Dashboard Stats** — Revenue, overdue count, client overview
-- 🌙 **Dark Mode** — Full dark mode support
-- 🔗 **Stripe Integration** — Import invoices from Stripe (planned)
-- 📱 **Twilio SMS** — Send SMS reminders (planned)
-- 📧 **Resend Email** — Send email reminders (planned)
+- 💰 Invoice CRUD with status tracking (draft → sent → viewed → paid/overdue)
+- 👥 Client dashboard with contact management
+- 🔔 Reminder tracking (email & SMS ready)
+- 📊 Dashboard stats (revenue, overdue count, client count)
+- 🌙 Dark mode
+- 🔗 Stripe invoice import (planned)
+- 📱 Twilio SMS reminders (planned)
+- 📧 Resend email reminders (planned)
 
-## Tech Stack
-
-- React + Vite + TypeScript
-- TailwindCSS v4
-- Zustand (state management)
-- React Router (navigation)
-- Vitest (testing)
-
-## Getting Started
+## Quick Start
 
 ```bash
+git clone https://github.com/EdouardF/invoicenudge.git
+cd invoicenudge
 npm install
 npm run dev
 ```
 
-## Build
+## Architecture
 
-```bash
-npm run build
+```
+src/
+├── components/
+│   ├── Header.tsx
+│   ├── InvoiceList.tsx
+│   ├── InvoiceForm.tsx
+│   ├── ClientDashboard.tsx
+│   ├── ReminderForm.tsx
+│   └── Footer.tsx
+├── store/
+│   └── useAppStore.ts
+├── types/
+│   └── index.ts
+└── test/
+    ├── setup.ts
+    └── types.test.ts
 ```
 
-## Test
+**Planned backend:** Node.js + Express + SQLite with Stripe API, Twilio, Resend integrations.
 
-```bash
-npx vitest run
-```
+## Tech Stack
+
+| Layer | Tech |
+|-------|------|
+| Framework | React 19 + Vite |
+| Language | TypeScript (strict) |
+| Styling | TailwindCSS v4 |
+| State | Zustand |
+| Routing | React Router |
+| Tests | Vitest + @testing-library/react |
+| CI | GitHub Actions |
+| Quality | SonarCloud |
 
 ## Pricing
 
-- Free: 5 invoices/month, email reminders only
-- Pro ($29/mo): Unlimited invoices + SMS + Stripe sync + Templates
+| Plan | Price | Features |
+|------|-------|----------|
+| Free | $0 | 5 invoices/mo, email reminders |
+| Pro | $29/mo | Unlimited + SMS + Stripe + Templates |
+
+## Testing
+
+```bash
+npx vitest run
+npx vitest run --coverage
+```
+
+See [TESTING.md](./TESTING.md).
 
 ## License
 
 MIT
-
-Co-authored-by: Léonard <leonard@vanlife.dev>
-Co-authored-by: Gustave <gustave@vanlife.dev>
