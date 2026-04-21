@@ -46,7 +46,11 @@ export default function InvoiceList() {
                 <tr
                   key={invoice.id}
                   onClick={() => setSelectedInvoice(invoice)}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedInvoice(invoice); } }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Invoice for ${getClientName(clients, invoice.clientId)}, $${invoice.amount.toFixed(2)}, ${invoice.status}`}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <td className="px-4 py-3 text-gray-900 dark:text-white">{getClientName(clients, invoice.clientId)}</td>
                   <td className="px-4 py-3 font-mono text-gray-900 dark:text-white">${invoice.amount.toFixed(2)}</td>

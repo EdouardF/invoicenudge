@@ -42,8 +42,9 @@ export default function InvoiceForm() {
       </h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client</label>
+          <label htmlFor="invoice-client" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client</label>
           <select
+            id="invoice-client"
             value={clientId}
             onChange={(e) => setClientId(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
@@ -57,10 +58,12 @@ export default function InvoiceForm() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount ($)</label>
+            <label htmlFor="invoice-amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount ($)</label>
             <input
+              id="invoice-amount"
               type="number"
               step="0.01"
+              min="0.01"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
@@ -68,8 +71,9 @@ export default function InvoiceForm() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Due Date</label>
+            <label htmlFor="invoice-due" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Due Date</label>
             <input
+              id="invoice-due"
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
@@ -79,8 +83,9 @@ export default function InvoiceForm() {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+          <label htmlFor="invoice-desc" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
           <textarea
+            id="invoice-desc"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"

@@ -16,6 +16,7 @@ export default function Header() {
           </div>
           <div className="flex items-center gap-3">
             <button
+              aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
               onClick={toggleDarkMode}
               className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
