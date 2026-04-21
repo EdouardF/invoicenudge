@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useAppStore } from './store/useAppStore';
 import Header from './components/Header';
 import InvoiceList from './components/InvoiceList';
@@ -5,18 +6,20 @@ import InvoiceForm from './components/InvoiceForm';
 import ClientDashboard from './components/ClientDashboard';
 import ReminderForm from './components/ReminderForm';
 import Footer from './components/Footer';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   const { darkMode, invoices, clients } = useAppStore();
 
-  const totalRevenue = invoices.reduce((sum, i) => sum + i.amount, 0);
-  const overdueCount = invoices.filter((i) => i.status === 'overdue').length;
-  const paidCount = invoices.filter((i) => i.status === 'paid').length;
+  const totalRevenue = useMemo(() => invoices.reduce((sum, i) => sum + i.amount, 0), [invoices]);
+  const overdueCount = useMemo(() => invoices.filter((i) => i.status === 'overdue').length, [invoices]);
+  const paidCount = useMemo(() => invoices.filter((i) => i.status === 'paid').length, [invoices]);
 
   return (
-    <div className={`min-h-screen flex flex-col ${darkMode ? 'dark' : ''}`}>
-      <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white">
-        <Header />
+    <ErrorBoundary>
+      <div className={`min-h-screen flex flex-col ${darkMode ? 'dark' : ''}`}>
+        <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white">
+          <Header />
 
         <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
           {/* Stats */}
@@ -55,5 +58,6 @@ export default function App() {
         <Footer />
       </div>
     </div>
+    </ErrorBoundary>
   );
 }

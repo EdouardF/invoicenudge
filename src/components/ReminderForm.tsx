@@ -1,11 +1,9 @@
 import { useAppStore } from '../store/useAppStore';
+import { getClientName } from './InvoiceList';
 
 export default function ReminderForm() {
   const { invoices, clients, selectedInvoice, reminders } = useAppStore();
   const overdueInvoices = invoices.filter((i) => i.status === 'overdue' || i.status === 'sent');
-
-  const getClientName = (clientId: string) =>
-    clients.find((c) => c.id === clientId)?.name || 'Unknown';
 
   const invoiceReminders = selectedInvoice
     ? reminders.filter((r) => r.invoiceId === selectedInvoice.id)
@@ -20,7 +18,7 @@ export default function ReminderForm() {
       {selectedInvoice ? (
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-            Reminders for invoice to {getClientName(selectedInvoice.clientId)} — ${selectedInvoice.amount.toFixed(2)}
+            Reminders for invoice to {getClientName(clients, selectedInvoice.clientId)} — ${selectedInvoice.amount.toFixed(2)}
           </p>
           {invoiceReminders.length === 0 ? (
             <p className="text-sm text-gray-400 dark:text-gray-500">No reminders sent yet.</p>
@@ -48,7 +46,7 @@ export default function ReminderForm() {
           <div className="space-y-2">
             {overdueInvoices.map((inv) => (
               <div key={inv.id} className="flex items-center justify-between p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                <span className="text-sm text-gray-900 dark:text-white">{getClientName(inv.clientId)} — ${inv.amount.toFixed(2)}</span>
+                <span className="text-sm text-gray-900 dark:text-white">{getClientName(clients, inv.clientId)} — ${inv.amount.toFixed(2)}</span>
                 <span className="text-xs text-yellow-600 dark:text-yellow-400">{inv.status}</span>
               </div>
             ))}

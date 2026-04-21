@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import type { Client } from '../types';
 
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 export default function ClientDashboard() {
   const { clients, addClient, deleteClient } = useAppStore();
   const [showForm, setShowForm] = useState(false);
@@ -9,16 +13,17 @@ export default function ClientDashboard() {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email) return;
+    if (!name.trim() || !email.trim() || !isValidEmail(email)) return;
     const client: Client = {
       id: crypto.randomUUID(),
-      name,
-      email,
-      phone: phone || undefined,
-      company: company || undefined,
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone.trim() || undefined,
+      company: company.trim() || undefined,
       createdAt: new Date().toISOString(),
       invoiceCount: 0,
       totalRevenue: 0,
@@ -26,6 +31,16 @@ export default function ClientDashboard() {
     addClient(client);
     setName(''); setEmail(''); setPhone(''); setCompany('');
     setShowForm(false);
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirmDeleteId === id) {
+      deleteClient(id);
+      setConfirmDeleteId(null);
+    } else {
+      setConfirmDeleteId(id);
+      setTimeout(() => setConfirmDeleteId(null), 3000);
+    }
   };
 
   return (
@@ -45,14 +60,26 @@ export default function ClientDashboard() {
       {showForm && (
         <form onSubmit={handleAdd} className="p-4 border-b border-gray-200 dark:border-gray-700 space-y-3">
           <div className="grid grid-cols-2 gap-3">
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name *" required
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
-            <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email *" type="email" required
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
-            <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone"
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
-            <input value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Company"
-              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
+            <div>
+              <label htmlFor="client-name" className="sr-only">Name *</label>
+              <input id="client-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name *" required
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label htmlFor="client-email" className="sr-only">Email *</label>
+              <input id="client-email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email *" type="email" required
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label htmlFor="client-phone" className="sr-only">Phone</label>
+              <input id="client-phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone"
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
+            </div>
+            <div>
+              <label htmlFor="client-company" className="sr-only">Company</label>
+              <input id="client-company" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Company"
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
+            </div>
           </div>
           <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">
             Add Client
@@ -73,7 +100,17 @@ export default function ClientDashboard() {
                 <p className="font-medium text-gray-900 dark:text-white">{client.name}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{client.email}{client.company ? ` · ${client.company}` : ''}</p>
               </div>
-              <button onClick={() => deleteClient(client.id)} className="text-red-400 hover:text-red-600 text-sm">✕</button>
+              <button
+                onClick={() => handleDelete(client.id)}
+                className={`text-sm px-2 py-1 rounded transition-colors ${
+                  confirmDeleteId === client.id
+                    ? 'bg-red-600 text-white'
+                    : 'text-red-400 hover:text-red-600'
+                }`}
+                aria-label={`Delete client ${client.name}`}
+              >
+                {confirmDeleteId === client.id ? 'Confirm?' : '✕'}
+              </button>
             </div>
           ))}
         </div>

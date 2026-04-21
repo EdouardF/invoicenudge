@@ -13,10 +13,13 @@ export default function InvoiceForm() {
     e.preventDefault();
     if (!clientId || !amount || !dueDate) return;
 
+    const parsed = parseFloat(amount);
+    if (isNaN(parsed) || parsed < 0.01) return;
+
     const invoice: Invoice = {
       id: crypto.randomUUID(),
       clientId,
-      amount: parseFloat(amount),
+      amount: parsed,
       dueDate,
       status: 'draft',
       description,
