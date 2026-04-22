@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
+import { isValidEmail } from '../utils/helpers';
 import type { Client } from '../types';
-
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
 
 export default function ClientDashboard() {
   const { clients, addClient, deleteClient } = useAppStore();
@@ -14,10 +11,16 @@ export default function ClientDashboard() {
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState('');
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !isValidEmail(email)) return;
+    if (!name.trim()) return;
+    if (!email.trim() || !isValidEmail(email)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+    setEmailError('');
     const client: Client = {
       id: crypto.randomUUID(),
       name: name.trim(),
@@ -61,24 +64,25 @@ export default function ClientDashboard() {
         <form onSubmit={handleAdd} className="p-4 border-b border-gray-200 dark:border-gray-700 space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="client-name" className="sr-only">Name *</label>
-              <input id="client-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name *" required
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
+              <label htmlFor="client-name" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Name *</label>
+              <input id="client-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" required
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
             </div>
             <div>
-              <label htmlFor="client-email" className="sr-only">Email *</label>
-              <input id="client-email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email *" type="email" required
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
+              <label htmlFor="client-email" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Email *</label>
+              <input id="client-email" value={email} onChange={(e) => { setEmail(e.target.value); setEmailError(''); }} placeholder="john@example.com" type="email" required aria-describedby="email-error"
+                className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${emailError ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`} />
+              {emailError && <p id="email-error" className="text-xs text-red-500 mt-1" role="alert">{emailError}</p>}
             </div>
             <div>
-              <label htmlFor="client-phone" className="sr-only">Phone</label>
-              <input id="client-phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone"
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
+              <label htmlFor="client-phone" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Phone</label>
+              <input id="client-phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 555 123 4567"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
             </div>
             <div>
-              <label htmlFor="client-company" className="sr-only">Company</label>
-              <input id="client-company" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Company"
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
+              <label htmlFor="client-company" className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Company</label>
+              <input id="client-company" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Acme Inc"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white" />
             </div>
           </div>
           <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">

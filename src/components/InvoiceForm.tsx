@@ -8,13 +8,18 @@ export default function InvoiceForm() {
   const [amount, setAmount] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [description, setDescription] = useState('');
+  const [formError, setFormError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clientId || !amount || !dueDate) return;
+    setFormError('');
+
+    if (!clientId) { setFormError('Please select a client.'); return; }
+    if (!amount) { setFormError('Please enter an amount.'); return; }
 
     const parsed = parseFloat(amount);
-    if (isNaN(parsed) || parsed < 0.01) return;
+    if (isNaN(parsed) || parsed < 0.01) { setFormError('Amount must be at least $0.01.'); return; }
+    if (!dueDate) { setFormError('Please select a due date.'); return; }
 
     const invoice: Invoice = {
       id: crypto.randomUUID(),
@@ -29,10 +34,7 @@ export default function InvoiceForm() {
     };
 
     addInvoice(invoice);
-    setClientId('');
-    setAmount('');
-    setDueDate('');
-    setDescription('');
+    setClientId(''); setAmount(''); setDueDate(''); setDescription('');
   };
 
   return (
@@ -40,11 +42,17 @@ export default function InvoiceForm() {
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
         ✨ Create Invoice
       </h3>
+      {formError && (
+        <div className="mb-3 p-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded text-red-700 dark:text-red-300 text-sm" role="alert">
+          {formError}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="invoice-client" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client</label>
           <select
             id="invoice-client"
+            aria-describedby="invoice-client-help"
             value={clientId}
             onChange={(e) => setClientId(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
@@ -55,6 +63,7 @@ export default function InvoiceForm() {
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
+          <p id="invoice-client-help" className="sr-only">Choose a client for this invoice</p>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>

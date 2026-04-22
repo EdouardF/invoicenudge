@@ -43,12 +43,3 @@ export interface Template {
   isDefault: boolean;
   createdAt: string;
 }
-
-export const INVOICE_STATUSES = {
-  draft: { label: 'Draft', color: 'gray' },
-  sent: { label: 'Sent', color: 'blue' },
-  viewed: { label: 'Viewed', color: 'yellow' },
-  paid: { label: 'Paid', color: 'green' },
-  overdue: { label: 'Overdue', color: 'red' },
-  cancelled: { label: 'Cancelled', color: 'gray' },
-} as const;

@@ -1,5 +1,5 @@
 import { useAppStore } from '../store/useAppStore';
-import { getClientName } from './InvoiceList';
+import { getClientName } from '../utils/helpers';
 
 export default function ReminderForm() {
   const { invoices, clients, selectedInvoice, reminders } = useAppStore();

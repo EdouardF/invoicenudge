@@ -1,5 +1,5 @@
 import { useAppStore } from '../store/useAppStore';
-import { INVOICE_STATUSES } from '../types';
+import { STATUS_LABELS, STATUS_COLORS } from '../utils/helpers';
 
 export default function Header() {
   const { darkMode, toggleDarkMode } = useAppStore();

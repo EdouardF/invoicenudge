@@ -1,17 +1,5 @@
 import { useAppStore } from '../store/useAppStore';
-
-const STATUS_COLORS: Record<string, string> = {
-  draft: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200',
-  sent: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-  viewed: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-  paid: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  overdue: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-  cancelled: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200',
-};
-
-export function getClientName(clients: { id: string; name: string }[], clientId: string): string {
-  return clients.find((c) => c.id === clientId)?.name || 'Unknown';
-}
+import { getClientName, STATUS_COLORS, STATUS_ICONS } from '../utils/helpers';
 
 export default function InvoiceList() {
   const { invoices, clients, setSelectedInvoice } = useAppStore();
@@ -57,7 +45,7 @@ export default function InvoiceList() {
                   <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{invoice.dueDate}</td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[invoice.status] || ''}`}>
-                      {invoice.status}
+                      {STATUS_ICONS[invoice.status] || ''} {invoice.status}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{invoice.reminderCount}</td>
