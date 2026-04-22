@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useAppStore } from '../store/useAppStore';
-import type { Invoice, Client } from '../types';
+import type { Invoice, Client, Reminder } from '../types';
 
 describe('useAppStore', () => {
   beforeEach(() => {
@@ -105,5 +105,35 @@ describe('useAppStore', () => {
     expect(useAppStore.getState().error).toBe('Test error');
     useAppStore.getState().setError(null);
     expect(useAppStore.getState().error).toBeNull();
+  });
+
+  it('should add a reminder', () => {
+    const reminder: Reminder = {
+      id: 'r1', invoiceId: '1', type: 'email', status: 'pending',
+      message: 'Payment due', createdAt: '2026-04-21',
+    };
+    useAppStore.getState().addReminder(reminder);
+    expect(useAppStore.getState().reminders).toHaveLength(1);
+    expect(useAppStore.getState().reminders[0].type).toBe('email');
+  });
+
+  it('should update a reminder status', () => {
+    const reminder: Reminder = {
+      id: 'r1', invoiceId: '1', type: 'email', status: 'pending',
+      message: 'Payment due', createdAt: '2026-04-21',
+    };
+    useAppStore.getState().addReminder(reminder);
+    useAppStore.getState().updateReminder('r1', { status: 'sent', sentAt: '2026-04-22' });
+    expect(useAppStore.getState().reminders[0].status).toBe('sent');
+  });
+
+  it('should delete a reminder', () => {
+    const reminder: Reminder = {
+      id: 'r1', invoiceId: '1', type: 'email', status: 'pending',
+      message: 'Payment due', createdAt: '2026-04-21',
+    };
+    useAppStore.getState().addReminder(reminder);
+    useAppStore.getState().deleteReminder('r1');
+    expect(useAppStore.getState().reminders).toHaveLength(0);
   });
 });

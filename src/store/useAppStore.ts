@@ -48,6 +48,9 @@ interface AppState {
   addClient: (client: Client) => void;
   updateClient: (id: string, updates: Partial<Client>) => void;
   deleteClient: (id: string) => void;
+  addReminder: (reminder: Reminder) => void;
+  updateReminder: (id: string, updates: Partial<Reminder>) => void;
+  deleteReminder: (id: string) => void;
   setSelectedInvoice: (invoice: Invoice | null) => void;
   setSelectedClient: (client: Client | null) => void;
   toggleDarkMode: () => void;
@@ -107,6 +110,23 @@ export const useAppStore = create<AppState>((set) => ({
     const next = { ...s, clients: s.clients.filter((c) => c.id !== id) };
     saveState(next);
     return { clients: next.clients };
+  }),
+
+  addReminder: (reminder) => set((s) => {
+    const next = { ...s, reminders: [...s.reminders, reminder] };
+    saveState(next);
+    return { reminders: next.reminders };
+  }),
+  updateReminder: (id, updates) => set((s) => {
+    const reminders = s.reminders.map((r) => (r.id === id ? { ...r, ...updates } : r));
+    const next = { ...s, reminders };
+    saveState(next);
+    return { reminders };
+  }),
+  deleteReminder: (id) => set((s) => {
+    const next = { ...s, reminders: s.reminders.filter((r) => r.id !== id) };
+    saveState(next);
+    return { reminders: next.reminders };
   }),
 
   setSelectedInvoice: (invoice) => set({ selectedInvoice: invoice }),
