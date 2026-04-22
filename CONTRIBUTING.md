@@ -1,15 +1,43 @@
 # Contributing to InvoiceNudge
 
-## Dev Pipeline
+Thanks for your interest in contributing! Here's how to get started.
 
+## Development Setup
+
+```bash
+npm install
+npm run dev
 ```
-Léonard (Plan) → Gustave/Marcel (Code) → Émile (Tests) → Noémie (QA) → Marguerite (Docs) → Clara (Review ≥9.5) → Hector (CI/CD)
-```
 
-## Rules
+## Scripts
 
-1. Every change through the pipeline
-2. Tests mandatory (Rule 17)
-3. Clara review ≥ 9.5/10
-4. React + Vite + TS + TailwindCSS
-5. Co-author commits for each agent
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server |
+| `npm run build` | Production build |
+| `npm run test` | Run tests |
+| `npm run test:coverage` | Tests with coverage |
+| `npm run lint` | Lint with ESLint |
+
+## Pull Request Process
+
+1. Create a feature branch from `main`
+2. Make your changes with tests
+3. Ensure all tests pass: `npm run test`
+4. Ensure build passes: `npm run build`
+5. Open a PR with a clear description
+
+## Code Style
+
+- TypeScript strict mode
+- React functional components with hooks
+- Tailwind CSS for styling
+- JSDoc on all exported functions
+- Tests required for new features
+
+## Reporting Issues
+
+Open a GitHub issue with:
+- Steps to reproduce
+- Expected vs actual behavior
+- Browser/OS information
