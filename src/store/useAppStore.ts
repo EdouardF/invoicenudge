@@ -1,6 +1,32 @@
 import { create } from 'zustand';
 import type { Invoice, Client, Reminder, Template } from '../types';
 
+const STORAGE_KEY = 'invoicenudge-state';
+
+function loadState(): Partial<Pick<AppState, 'invoices' | 'clients' | 'reminders' | 'templates' | 'darkMode'>> {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
+
+function saveState(state: Pick<AppState, 'invoices' | 'clients' | 'reminders' | 'templates' | 'darkMode'>) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      invoices: state.invoices,
+      clients: state.clients,
+      reminders: state.reminders,
+      templates: state.templates,
+      darkMode: state.darkMode,
+    }));
+  } catch {
+    // Storage full or unavailable — fail silently
+  }
+}
+
 interface AppState {
   invoices: Invoice[];
   clients: Client[];
@@ -10,6 +36,7 @@ interface AppState {
   selectedClient: Client | null;
   darkMode: boolean;
   isLoading: boolean;
+  error: string | null;
 
   setInvoices: (invoices: Invoice[]) => void;
   setClients: (clients: Client[]) => void;
@@ -25,39 +52,71 @@ interface AppState {
   setSelectedClient: (client: Client | null) => void;
   toggleDarkMode: () => void;
   setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
 }
 
+const saved = loadState();
+
 export const useAppStore = create<AppState>((set) => ({
-  invoices: [],
-  clients: [],
-  reminders: [],
-  templates: [],
+  invoices: saved.invoices ?? [],
+  clients: saved.clients ?? [],
+  reminders: saved.reminders ?? [],
+  templates: saved.templates ?? [],
   selectedInvoice: null,
   selectedClient: null,
-  darkMode: false,
+  darkMode: saved.darkMode ?? false,
   isLoading: false,
+  error: null,
 
   setInvoices: (invoices) => set({ invoices }),
   setClients: (clients) => set({ clients }),
   setReminders: (reminders) => set({ reminders }),
   setTemplates: (templates) => set({ templates }),
 
-  addInvoice: (invoice) => set((s) => ({ invoices: [...s.invoices, invoice] })),
+  addInvoice: (invoice) => set((s) => {
+    const next = { ...s, invoices: [...s.invoices, invoice] };
+    saveState(next);
+    return { invoices: next.invoices };
+  }),
   updateInvoice: (id, updates) =>
-    set((s) => ({
-      invoices: s.invoices.map((i) => (i.id === id ? { ...i, ...updates } : i)),
-    })),
-  deleteInvoice: (id) => set((s) => ({ invoices: s.invoices.filter((i) => i.id !== id) })),
+    set((s) => {
+      const invoices = s.invoices.map((i) => (i.id === id ? { ...i, ...updates } : i));
+      const next = { ...s, invoices };
+      saveState(next);
+      return { invoices };
+    }),
+  deleteInvoice: (id) => set((s) => {
+    const next = { ...s, invoices: s.invoices.filter((i) => i.id !== id) };
+    saveState(next);
+    return { invoices: next.invoices };
+  }),
 
-  addClient: (client) => set((s) => ({ clients: [...s.clients, client] })),
+  addClient: (client) => set((s) => {
+    const next = { ...s, clients: [...s.clients, client] };
+    saveState(next);
+    return { clients: next.clients };
+  }),
   updateClient: (id, updates) =>
-    set((s) => ({
-      clients: s.clients.map((c) => (c.id === id ? { ...c, ...updates } : c)),
-    })),
-  deleteClient: (id) => set((s) => ({ clients: s.clients.filter((c) => c.id !== id) })),
+    set((s) => {
+      const clients = s.clients.map((c) => (c.id === id ? { ...c, ...updates } : c));
+      const next = { ...s, clients };
+      saveState(next);
+      return { clients };
+    }),
+  deleteClient: (id) => set((s) => {
+    const next = { ...s, clients: s.clients.filter((c) => c.id !== id) };
+    saveState(next);
+    return { clients: next.clients };
+  }),
 
   setSelectedInvoice: (invoice) => set({ selectedInvoice: invoice }),
   setSelectedClient: (client) => set({ selectedClient: client }),
-  toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
+  toggleDarkMode: () => set((s) => {
+    const darkMode = !s.darkMode;
+    const next = { ...s, darkMode };
+    saveState(next);
+    return { darkMode };
+  }),
   setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
 }));

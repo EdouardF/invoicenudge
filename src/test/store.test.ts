@@ -13,6 +13,7 @@ describe('useAppStore', () => {
       selectedClient: null,
       darkMode: false,
       isLoading: false,
+      error: null,
     });
   });
 
@@ -97,5 +98,12 @@ describe('useAppStore', () => {
   it('should set loading state', () => {
     useAppStore.getState().setLoading(true);
     expect(useAppStore.getState().isLoading).toBe(true);
+  });
+
+  it('should set and clear error', () => {
+    useAppStore.getState().setError('Test error');
+    expect(useAppStore.getState().error).toBe('Test error');
+    useAppStore.getState().setError(null);
+    expect(useAppStore.getState().error).toBeNull();
   });
 });
